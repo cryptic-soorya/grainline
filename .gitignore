@@ -1,0 +1,10 @@
+node_modules
+.next
+.env.local
+public/sw.js
+public/workbox-*.js
+public/worker-*.js
+public/sw.js.map
+public/fallback-*.js
+.DS_Store
+firebase-debug.log

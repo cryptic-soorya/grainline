@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-charcoal text-parchment font-body;
+  }
+
+  ::selection {
+    @apply bg-chalk-gold text-ink;
+  }
+
+  /* The brief asked for animation, but a good build always respects people
+     who've told their OS they get motion-sick or distracted by movement.
+     This turns every animation into an instant snap instead of a tween. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Dashed "cut line" border used on pattern-piece cards throughout the hub. */
+  .cut-line {
+    border: 1.5px dashed theme("colors.ink / 35%");
+  }
+}

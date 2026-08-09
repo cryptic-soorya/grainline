@@ -1,0 +1,23 @@
+rules_version = '2';
+
+// Core rule for the whole app: a signed-in user can only read/write their
+// own data. Every future collection (swatches, measurements, etc.) should
+// nest under users/{uid}/... so this one rule protects all of them
+// automatically, instead of writing a new rule per collection.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // The user's own profile doc (created on first sign-in in app/page.tsx)
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Anything nested under a user's doc — swatches, measurements,
+      // saved calculator results, etc. — inherits the same "only the
+      // owner" rule. Add real subcollections here as Phase 2+ builds them,
+      // e.g. match /swatches/{swatchId} { ... }
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
