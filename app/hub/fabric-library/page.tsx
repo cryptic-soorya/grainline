@@ -25,6 +25,10 @@ export default function FabricLibraryPage() {
   const [search, setSearch] = useState("");
   const [drapeFilter, setDrapeFilter] = useState<Drape | "">("");
   const [opacityFilter, setOpacityFilter] = useState<Opacity | "">("");
+  const [gsmMin, setGsmMin] = useState("");
+  const [gsmMax, setGsmMax] = useState("");
+  const [stretchMin, setStretchMin] = useState("");
+  const [stretchMax, setStretchMax] = useState("");
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -48,14 +52,22 @@ export default function FabricLibraryPage() {
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
+    const gsmMinNum = gsmMin.trim() === "" ? null : Number(gsmMin);
+    const gsmMaxNum = gsmMax.trim() === "" ? null : Number(gsmMax);
+    const stretchMinNum = stretchMin.trim() === "" ? null : Number(stretchMin);
+    const stretchMaxNum = stretchMax.trim() === "" ? null : Number(stretchMax);
     return swatches.filter((s) => {
       if (drapeFilter && s.drape !== drapeFilter) return false;
       if (opacityFilter && s.opacity !== opacityFilter) return false;
+      if (gsmMinNum !== null && (s.gsm === null || s.gsm < gsmMinNum)) return false;
+      if (gsmMaxNum !== null && (s.gsm === null || s.gsm > gsmMaxNum)) return false;
+      if (stretchMinNum !== null && (s.stretchPercent === null || s.stretchPercent < stretchMinNum)) return false;
+      if (stretchMaxNum !== null && (s.stretchPercent === null || s.stretchPercent > stretchMaxNum)) return false;
       if (!term) return true;
       const haystack = [s.name, s.fiberContent, s.care, s.notes].join(" ").toLowerCase();
       return haystack.includes(term);
     });
-  }, [swatches, search, drapeFilter, opacityFilter]);
+  }, [swatches, search, drapeFilter, opacityFilter, gsmMin, gsmMax, stretchMin, stretchMax]);
 
   if (checking) {
     return (
@@ -109,6 +121,49 @@ export default function FabricLibraryPage() {
           <option value="semi-opaque">Semi-opaque</option>
           <option value="opaque">Opaque</option>
         </select>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3 mb-8 -mt-5">
+        <div className="flex-1 flex items-center gap-2">
+          <span className="font-mono text-xs text-parchment/50 shrink-0">GSM</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            placeholder="min"
+            value={gsmMin}
+            onChange={(e) => setGsmMin(e.target.value)}
+            className="w-full bg-muslin text-ink border border-ink/15 rounded-sm px-3 py-2 font-mono text-sm focus:outline-none focus:border-chalk-gold"
+          />
+          <span className="font-mono text-xs text-parchment/50">–</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            placeholder="max"
+            value={gsmMax}
+            onChange={(e) => setGsmMax(e.target.value)}
+            className="w-full bg-muslin text-ink border border-ink/15 rounded-sm px-3 py-2 font-mono text-sm focus:outline-none focus:border-chalk-gold"
+          />
+        </div>
+        <div className="flex-1 flex items-center gap-2">
+          <span className="font-mono text-xs text-parchment/50 shrink-0">Stretch %</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            placeholder="min"
+            value={stretchMin}
+            onChange={(e) => setStretchMin(e.target.value)}
+            className="w-full bg-muslin text-ink border border-ink/15 rounded-sm px-3 py-2 font-mono text-sm focus:outline-none focus:border-chalk-gold"
+          />
+          <span className="font-mono text-xs text-parchment/50">–</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            placeholder="max"
+            value={stretchMax}
+            onChange={(e) => setStretchMax(e.target.value)}
+            className="w-full bg-muslin text-ink border border-ink/15 rounded-sm px-3 py-2 font-mono text-sm focus:outline-none focus:border-chalk-gold"
+          />
+        </div>
       </div>
 
       {error && <p className="text-pin-red text-sm font-mono mb-4">{error}</p>}

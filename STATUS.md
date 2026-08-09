@@ -1,6 +1,6 @@
 # STATUS.md — Grainline
 
-Last updated: Phase 3 compatibility checker built in Claude Code (2026-08-10).
+Last updated: GSM/stretch % filters added to fabric library search (2026-08-10).
 
 ## Current phase: Phase 3 — Compatibility checker
 
@@ -45,7 +45,8 @@ Last updated: Phase 3 compatibility checker built in Claude Code (2026-08-10).
       doc cap.
 - [x] `components/SwatchCard.tsx`, `components/FormField.tsx`
 - [x] `/hub/fabric-library` — swatch grid with client-side search (name,
-      fiber, care, notes) and drape/opacity filters
+      fiber, care, notes), drape/opacity filters, and GSM/stretch % range
+      filters (min/max number inputs)
 - [x] `/hub/fabric-library/new` — add-swatch form (photo, name, fiber
       content, GSM, stretch %, drape, opacity, care, notes)
 - [x] `/hub/fabric-library/[id]` — view swatch, inline edit, delete
@@ -104,8 +105,8 @@ Last updated: Phase 3 compatibility checker built in Claude Code (2026-08-10).
       compile — Claude Code can't drive an OAuth popup itself
 - [ ] Set `isFounder: true` manually in Firestore (`users/{uid}` doc) for
       the girlfriend's account once she signs up for the first time
-- [ ] `/hub/fabric-library` and `/hub/compatibility` routes are stubbed but
-      have no real functionality yet — that's Phase 2/3
+- [x] `/hub/fabric-library` and `/hub/compatibility` routes are live with
+      real functionality — built in Phase 2/3 (see below)
 
 ## Next up
 Deploy to Vercel, do a real sign-in test in a browser, then manually verify
