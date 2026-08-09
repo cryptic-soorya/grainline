@@ -8,3 +8,5 @@ public/sw.js.map
 public/fallback-*.js
 .DS_Store
 firebase-debug.log
+tsconfig.tsbuildinfo
+.claude/worktrees/

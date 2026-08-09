@@ -1,8 +1,65 @@
 # STATUS.md — Grainline
 
-Last updated: Phase 1 shell, verified end-to-end in Claude Code (2026-08-10).
+Last updated: Phase 3 compatibility checker built in Claude Code (2026-08-10).
 
-## Current phase: Phase 1 — Shell
+## Current phase: Phase 3 — Compatibility checker
+
+### Done
+- [x] `lib/compatibility.ts` — rules-based checker. Takes an outer fabric
+      plus optional interfacing/lining `FabricSpec`s and returns a verdict
+      (`good` / `workable` / `caution`) with a plain-language reason per
+      rule that fired. Rules: interfacing-vs-outer weight (fail if
+      interfacing is heavier — it overpowers the shell), interfacing-vs-outer
+      stretch (fail if outer stretches but interfacing doesn't — kills the
+      stretch and puckers), lining-vs-outer weight, lining-vs-outer drape
+      (structured lining under fluid outer = warn; fluid lining under
+      structured outer = a classic pairing, passes), sheer-outer-needs-opaque-
+      lining, and a care-instructions-spread check (dry-clean-only next to
+      machine-washable = warn, since the garment has to follow the strictest
+      one once sewn together). Textbook construction heuristics, not a
+      physics sim — good enough to catch the mistakes that actually ruin a
+      garment.
+- [x] `/hub/compatibility` — pick outer (required), interfacing (optional),
+      lining (optional) each either from the existing swatch library or
+      typed in by hand (GSM, stretch %, drape, opacity, care). Reuses
+      `FormField`/`inputClass` from Phase 2 and `DRAPE_LABEL`/`OPACITY_LABEL`
+      from `lib/swatches.ts` rather than redefining them.
+- [x] `npx tsc --noEmit` clean; route verified rendering (HTTP 200) locally
+
+### Not done yet
+- [ ] Manually run through a real check against real swatches in a signed-in
+      browser session (only route-render + typecheck verified this session)
+- [ ] Deploy to Vercel — still outstanding from Phase 1/2
+
+## Phase 2 — Fabric swatch library
+
+### Done
+- [x] `lib/swatches.ts` — Firestore CRUD for swatches, nested at
+      `users/{uid}/swatches/{id}` (already covered by the existing owner-only
+      security rule, no rules changes needed)
+- [x] `lib/imageResize.ts` — resizes/compresses swatch photos client-side to
+      a base64 data URL stored directly on the Firestore doc. Deliberately
+      NOT using Firebase Cloud Storage: new Firebase projects need the paid
+      Blaze plan to enable it, and keeping this free is a hard requirement
+      (see CLAUDE.md). Resize keeps photos comfortably under Firestore's 1MB
+      doc cap.
+- [x] `components/SwatchCard.tsx`, `components/FormField.tsx`
+- [x] `/hub/fabric-library` — swatch grid with client-side search (name,
+      fiber, care, notes) and drape/opacity filters
+- [x] `/hub/fabric-library/new` — add-swatch form (photo, name, fiber
+      content, GSM, stretch %, drape, opacity, care, notes)
+- [x] `/hub/fabric-library/[id]` — view swatch, inline edit, delete
+      (with confirm)
+- [x] `npx tsc --noEmit` clean; all three routes verified rendering
+      (HTTP 200) locally
+
+### Not done yet
+- [ ] Manually tested against a real signed-in account with real photos
+      (verified routes render, but no live Firebase read/write exercised
+      in this session)
+- [ ] Deploy to Vercel — Phase 1's deploy step is still outstanding too
+
+## Phase 1 — Shell
 
 ### Done
 - [x] Project scaffolded: Next.js 15 App Router + TypeScript + Tailwind
@@ -51,9 +108,9 @@ Last updated: Phase 1 shell, verified end-to-end in Claude Code (2026-08-10).
       have no real functionality yet — that's Phase 2/3
 
 ## Next up
-Deploy to Vercel, do a real sign-in test in a browser, then Phase 2: Fabric
-swatch library — see PLAN.md for the field list (fiber content, GSM,
-stretch %, drape, opacity, care instructions).
+Deploy to Vercel, do a real sign-in test in a browser, then manually verify
+the Phase 3 compatibility checker against real swatches. Phase 4+ is TBD by
+what Phase 2/3 usage actually shows.
 
 ## Notes for next session
 - Firebase project ID: `grainline1`. Console:

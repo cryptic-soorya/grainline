@@ -8,10 +8,11 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, writeBatch, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { StitchDivider } from "@/components/StitchDivider";
 import { triggerHaptic } from "@/lib/haptics";
+import { STARTER_FABRICS } from "@/lib/starterFabrics";
 
 /**
  * Landing page = wordmark + auth. This is the first thing anyone sees, so
@@ -40,7 +41,26 @@ export default function LandingPage() {
         createdAt: serverTimestamp(),
         isFounder: false, // set to true manually for the girlfriend's account
       });
+      await seedStarterFabrics(uid);
     }
+  }
+
+  // Every brand-new account starts with a small reference fabric library
+  // (see lib/starterFabrics.ts) instead of an empty one — gives people
+  // something to look at/edit immediately rather than a blank screen.
+  // A single batch write keeps this atomic and cheap (one round trip).
+  async function seedStarterFabrics(uid: string) {
+    const batch = writeBatch(db);
+    const swatchesRef = collection(db, "users", uid, "swatches");
+    for (const fabric of STARTER_FABRICS) {
+      const swatchDoc = doc(swatchesRef);
+      batch.set(swatchDoc, {
+        ...fabric,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+    await batch.commit();
   }
 
   async function handleGoogleSignIn() {
