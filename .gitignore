@@ -10,3 +10,4 @@ public/fallback-*.js
 firebase-debug.log
 tsconfig.tsbuildinfo
 .claude/worktrees/
+.vercel

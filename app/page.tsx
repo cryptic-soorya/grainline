@@ -12,7 +12,7 @@ import { doc, getDoc, setDoc, collection, writeBatch, serverTimestamp } from "fi
 import { auth, db } from "@/lib/firebase";
 import { StitchDivider } from "@/components/StitchDivider";
 import { triggerHaptic } from "@/lib/haptics";
-import { STARTER_FABRICS } from "@/lib/starterFabrics";
+import { STARTER_FABRICS, backfillStarterPhotos } from "@/lib/starterFabrics";
 
 /**
  * Landing page = wordmark + auth. This is the first thing anyone sees, so
@@ -42,6 +42,10 @@ export default function LandingPage() {
         isFounder: false, // set to true manually for the girlfriend's account
       });
       await seedStarterFabrics(uid);
+    } else {
+      // Returning account: fill in photos for any starter swatch that
+      // predates lib/starterFabrics.ts having images (see backfillStarterPhotos).
+      await backfillStarterPhotos(uid);
     }
   }
 
