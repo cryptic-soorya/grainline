@@ -83,7 +83,14 @@ export default function HubPage() {
         <PatternCard
           title="Measurements"
           description="Save your own or client measurements, reused across projects."
-          live={false}
+          live={true}
+          onOpen={() => router.push("/hub/measurements")}
+        />
+        <PatternCard
+          title="Yardage & Cost"
+          description="Convert yardage across fabric widths and estimate project cost."
+          live={true}
+          onOpen={() => router.push("/hub/yardage")}
         />
         <PatternCard
           title="Flashcards"
@@ -93,7 +100,8 @@ export default function HubPage() {
         <PatternCard
           title="Deadlines"
           description="Assignment due dates and submission checklists."
-          live={false}
+          live={true}
+          onOpen={() => router.push("/hub/deadlines")}
         />
       </div>
     </main>

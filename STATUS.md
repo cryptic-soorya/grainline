@@ -1,8 +1,99 @@
 # STATUS.md — Grainline
 
-Last updated: Phase 4 pattern calculators built in Claude Code (2026-08-12).
+Last updated: Phase 5 deadline tracker built in Claude Code (2026-08-12).
 
-## Current phase: Phase 4 — Pattern math calculators
+## Current phase: Phase 5 — Deadline/project tracker
+
+### Done
+- [x] `lib/deadlines.ts` — Firestore CRUD, nested at
+      `users/{uid}/deadlines/{id}` (owner-only rule already covers it, no
+      rules changes needed). Ordered by due date ascending (not createdAt
+      like swatches/measurements) since "what's due soonest" is the point.
+      Each deadline: title, course/project, due date (plain ISO date
+      string, no time component), a submission checklist (label + done),
+      notes, and a `completed` flag. `daysUntil()` does day-granularity
+      overdue/due-today/days-left math.
+- [x] `components/DeadlineCard.tsx` — list card leading with days-remaining,
+      pin-red accent when overdue/due today (per CLAUDE.md, the one place
+      that accent color is meant to be used).
+- [x] `/hub/deadlines` — list with a "show completed" toggle (defaults to
+      hiding completed so the list stays focused on what's actually coming
+      up), sorted soonest-first.
+- [x] `/hub/deadlines/new` — add form (title, course, due date, add/remove
+      checklist rows, notes).
+- [x] `/hub/deadlines/[id]` — view/edit/delete. Checklist checkboxes and the
+      "mark complete" button save immediately without entering edit mode —
+      those are the actions used constantly while working toward a
+      deadline, unlike the other Phase 2/5 detail pages where edit is a
+      deliberate separate step.
+- [x] Hub's "Deadlines" card flipped from ghost (`live={false}`) to live,
+      routes to `/hub/deadlines`.
+- [x] `npx tsc --noEmit` clean; hub, list, and new-deadline routes verified
+      rendering (HTTP 200) locally.
+
+### Not done yet
+- [ ] Manually add/check off/complete/delete a real deadline in a signed-in
+      browser session (route-render + typecheck verified this session only)
+- [ ] Deploy to Vercel — still outstanding from Phase 1
+
+## Phase 5 — Yardage & cost calculator
+
+### Done
+- [x] `lib/yardage.ts` — pure functions, no Firestore (one-off math, same
+      shape as `lib/patternMath.ts`): fabric width conversion (proportional
+      re-estimate of yardage when your fabric width differs from what the
+      pattern envelope printed, e.g. envelope says 2m at 150cm → how much at
+      112cm) with an optional buffer % on top (nap, print/stripe matching,
+      shrinkage, mistakes); cost estimate (length × price per unit + flat
+      trims/notions cost → total, divided across a garment count for
+      cost-per-garment on multiples).
+- [x] `/hub/yardage` — two-tab UI ("Width conversion", "Cost estimate"),
+      live calculation as you type. Reuses `FormField`/`inputClass` from
+      Phase 2 and the tabbed-calculator layout from `/hub/pattern-math`.
+- [x] Hub gets a new "Yardage & Cost" card (live), routes to `/hub/yardage`
+      — added after Measurements per the Phase 5+ order in PLAN.md.
+- [x] `npx tsc --noEmit` clean; both hub and the new route verified
+      rendering (HTTP 200) locally.
+
+### Not done yet
+- [ ] Manually run both calculators with real numbers in a signed-in
+      browser session (route-render + typecheck verified this session only)
+- [ ] Deploy to Vercel — still outstanding from Phase 1
+
+## Phase 5 — Measurement tracker
+
+### Done
+- [x] `lib/measurements.ts` — Firestore CRUD for measurement profiles,
+      nested at `users/{uid}/measurementProfiles/{id}` (already covered by
+      the existing owner-only security rule, no rules changes needed). A
+      profile is one person (self or a client) with a standard 12-field
+      pattern-drafting measurement set (bust, waist, hip, shoulder width,
+      arm length, etc.), a cm/in unit choice, a free-text `custom` list for
+      anything outside the standard set, and notes.
+- [x] `components/MeasurementCard.tsx` — list card, mirrors `SwatchCard`
+      styling minus the photo (profiles don't have one).
+- [x] `/hub/measurements` — profile grid with client-side name/notes search.
+- [x] `/hub/measurements/new` — add-profile form (name, unit, 12 standard
+      fields, add/remove custom rows, notes). Reuses `FormField`/`inputClass`
+      from Phase 2.
+- [x] `/hub/measurements/[id]` — view profile, inline edit, delete (with
+      confirm).
+- [x] Hub's "Measurements" card flipped from ghost (`live={false}`) to
+      live, routes to `/hub/measurements`.
+- [x] `PLAN.md` updated with the Phase 5+ build order (measurement tracker
+      → yardage & cost calculator → deadline/project tracker → flashcards,
+      picked 2026-08-12 since no real usage data exists yet to order it by).
+- [x] `npx tsc --noEmit` clean; all three new routes verified rendering
+      (HTTP 200) locally.
+
+### Not done yet
+- [ ] Manually click through add/edit/delete with real measurements in a
+      signed-in browser session (only route-render + typecheck verified
+      this session, same caveat as every prior phase — Claude Code can't
+      drive the OAuth popup)
+- [ ] Deploy to Vercel — still outstanding from Phase 1
+
+## Phase 4 — Pattern math calculators
 
 ### Done
 - [x] `lib/patternMath.ts` — four pure calculators, no Firestore (one-off
@@ -147,9 +238,10 @@ Last updated: Phase 4 pattern calculators built in Claude Code (2026-08-12).
 
 ## Next up
 Deploy to Vercel, do a real sign-in test in a browser, then manually click
-through Phase 2/3/4 (fabric library, compatibility checker, pattern
-calculators) with real data. Phase 5+ (measurement tracker, flashcards,
-deadlines, yardage/cost calculator) is TBD by what actual usage shows.
+through Phase 2/3/4/5 (fabric library, compatibility checker, pattern
+calculators, measurements) with real data. Next build after that: yardage &
+cost calculator (see PLAN.md Phase 5+ order, picked 2026-08-12 with no
+usage data yet to go on).
 
 ## Notes for next session
 - Firebase project ID: `grainline1`. Console:

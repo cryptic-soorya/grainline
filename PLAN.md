@@ -125,11 +125,13 @@ Each calculator is a small pure function in `lib/patternMath.ts` (no
 Firestore — these are one-off math, not saved data) plus a shared
 `/hub/pattern-math` page with a tab per calculator.
 
-### Phase 5+ (order TBD by real usage)
-- Measurement tracker (self or client measurements, reusable across projects)
-- Terminology flashcards (spaced repetition)
-- Deadline/project tracker
-- Yardage & cost calculator
+### Phase 5+ (order picked 2026-08-12, no usage data yet — revisit once real
+usage exists)
+1. Measurement tracker (self or client measurements, reusable across
+   projects) — built 2026-08-12
+2. Yardage & cost calculator — built 2026-08-12
+3. Deadline/project tracker — built 2026-08-12
+4. Terminology flashcards (spaced repetition)
 
 ## Monetization (deferred, noted so it's not forgotten)
 Free for everyone at first, girlfriend's account permanently free via
