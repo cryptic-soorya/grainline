@@ -54,10 +54,15 @@ export function garmentFromEasePercent(bodyMeasurement: number, easePercent: num
 // ---------------------------------------------------------------------------
 // Dart intake
 //
-// Darts absorb the gap between a larger circumference measurement and a
-// smaller one (classically bust vs. waist) so flat fabric can wrap a curved
-// body. Total intake needed is split evenly across however many darts the
-// pattern uses to take it in.
+// Darts absorb the gap between a larger measurement and a smaller one
+// (classically bust vs. waist) so flat fabric can wrap a curved body. Total
+// intake needed is split evenly across however many darts the pattern uses
+// to take it in.
+//
+// Caller must pass pattern-piece measurements (e.g. half-bust/half-waist for
+// a front bodice cut on the fold), not full body circumference — this
+// function has no way to know which convention it was given, and using full
+// circumference on a half pattern would double the correct intake.
 // ---------------------------------------------------------------------------
 
 export function calculateDartIntake(largerMeasurement: number, smallerMeasurement: number, dartCount: number): number {

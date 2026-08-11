@@ -176,10 +176,15 @@ function DartIntakeCalc() {
 
   return (
     <div className="space-y-3">
-      <FormField label="Larger measurement (e.g. bust)">
+      <p className="font-mono text-xs text-chalk-gold">
+        Use pattern-piece measurements (e.g. half-bust/half-waist for a front
+        bodice on the fold), not full body circumference — otherwise this
+        will come out double what the pattern actually needs.
+      </p>
+      <FormField label="Larger measurement (e.g. half-bust)">
         <input type="number" className={inputClass} value={larger} onChange={(e) => setLarger(e.target.value)} />
       </FormField>
-      <FormField label="Smaller measurement (e.g. waist)">
+      <FormField label="Smaller measurement (e.g. half-waist)">
         <input type="number" className={inputClass} value={smaller} onChange={(e) => setSmaller(e.target.value)} />
       </FormField>
       <FormField label="Number of darts">
