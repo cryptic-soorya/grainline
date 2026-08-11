@@ -11,3 +11,8 @@ firebase-debug.log
 tsconfig.tsbuildinfo
 .claude/worktrees/
 .vercel
+
+# Local-only planning/instruction docs for Claude Code — not published to GitHub
+CLAUDE.md
+PLAN.md
+STATUS.md
