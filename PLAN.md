@@ -110,8 +110,22 @@ world, not an abstracted "study app" look.
 - Rules-based verdict (weight-matching, stretch-matching, care compatibility)
   with a plain-language explanation of *why*
 
-### Phase 4+ (order TBD by real usage after Phase 2/3 ship)
-- Pattern math calculators (dart intake, seam allowance, ease %, grading)
+### Phase 4 — Pattern math calculators (in progress, started 2026-08-12)
+Picked first from the Phase 4+ list below since Phase 2/3 usage data isn't in
+yet — going with the order PLAN.md already had rather than waiting.
+- Seam allowance: add/remove a chosen SA from a pattern measurement
+- Ease %: given body measurement + finished garment measurement, compute
+  ease (and the reverse: given body measurement + target ease %, compute
+  finished garment measurement)
+- Dart intake: given the difference between two circumference measurements
+  (e.g. bust and waist) and dart count, compute intake per dart
+- Grading: given a base measurement and a per-size increment, compute the
+  measurement at a target size step (up or down)
+Each calculator is a small pure function in `lib/patternMath.ts` (no
+Firestore — these are one-off math, not saved data) plus a shared
+`/hub/pattern-math` page with a tab per calculator.
+
+### Phase 5+ (order TBD by real usage)
 - Measurement tracker (self or client measurements, reusable across projects)
 - Terminology flashcards (spaced repetition)
 - Deadline/project tracker

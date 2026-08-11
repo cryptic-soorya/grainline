@@ -1,8 +1,35 @@
 # STATUS.md — Grainline
 
-Last updated: Phase 3 compatibility checker built in Claude Code (2026-08-10).
+Last updated: Phase 4 pattern calculators built in Claude Code (2026-08-12).
 
-## Current phase: Phase 3 — Compatibility checker
+## Current phase: Phase 4 — Pattern math calculators
+
+### Done
+- [x] `lib/patternMath.ts` — four pure calculators, no Firestore (one-off
+      math, nothing saved): seam allowance (add/remove, finished ↔ cutting
+      measurement, configurable for 1 or 2 sewn edges), ease (garment +
+      body → ease and ease %, or the reverse: body + target ease % →
+      garment measurement), dart intake (larger/smaller circumference +
+      dart count → intake per dart), grading (base measurement + per-size
+      increment + signed size steps → graded measurement).
+- [x] `/hub/pattern-math` — tabbed UI, one tab per calculator, live
+      calculation as you type (no submit button needed, it's just
+      arithmetic). Reuses `FormField`/`inputClass` from Phase 2.
+- [x] Hub's "Pattern Calculators" card flipped from ghost (`live={false}`)
+      to live, routes to `/hub/pattern-math`.
+- [x] `npx tsc --noEmit` clean; route verified rendering (HTTP 200) locally
+- [x] `checkCompatibility` (Phase 3 rules engine) not touched this session
+      but sanity-tested directly against 5 realistic scenarios as part of
+      closing out Phase 3 verification — see Phase 3 section below.
+
+### Not done yet
+- [ ] Manually click through all four calculators in a signed-in browser
+      session with real numbers (only route-render + typecheck verified
+      this session, same caveat as Phase 2/3 — Claude Code can't drive the
+      OAuth popup)
+- [ ] Deploy to Vercel — still outstanding from Phase 1/2/3
+
+## Phase 3 — Compatibility checker
 
 ### Done
 - [x] `lib/compatibility.ts` — rules-based checker. Takes an outer fabric
@@ -28,7 +55,18 @@ Last updated: Phase 3 compatibility checker built in Claude Code (2026-08-10).
 
 ### Not done yet
 - [ ] Manually run through a real check against real swatches in a signed-in
-      browser session (only route-render + typecheck verified this session)
+      browser session — Claude Code can't drive the Firebase OAuth popup, so
+      this still needs a human click-through. Everything Claude Code *can*
+      verify without a browser session was re-confirmed on 2026-08-12:
+      `npx tsc --noEmit` clean, all three hub routes still render (HTTP 200),
+      and `checkCompatibility()` was sanity-tested directly (bypassing the UI)
+      against 5 realistic garment scenarios — tailored jacket (good), stretch
+      knit with a too-heavy non-stretch interfacing (caution, both weight and
+      stretch rules correctly fired), unlined sheer blouse (warn), sheer
+      blouse with opaque lining but mismatched care levels (warn on care
+      only), and a fabric with no gsm/stretch/drape data (correctly produces
+      no false-positive reasons). Verdicts and reasoning all matched textbook
+      construction logic.
 - [ ] Deploy to Vercel — still outstanding from Phase 1/2
 
 ## Phase 2 — Fabric swatch library
@@ -108,9 +146,10 @@ Last updated: Phase 3 compatibility checker built in Claude Code (2026-08-10).
       have no real functionality yet — that's Phase 2/3
 
 ## Next up
-Deploy to Vercel, do a real sign-in test in a browser, then manually verify
-the Phase 3 compatibility checker against real swatches. Phase 4+ is TBD by
-what Phase 2/3 usage actually shows.
+Deploy to Vercel, do a real sign-in test in a browser, then manually click
+through Phase 2/3/4 (fabric library, compatibility checker, pattern
+calculators) with real data. Phase 5+ (measurement tracker, flashcards,
+deadlines, yardage/cost calculator) is TBD by what actual usage shows.
 
 ## Notes for next session
 - Firebase project ID: `grainline1`. Console:

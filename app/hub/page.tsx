@@ -77,7 +77,8 @@ export default function HubPage() {
         <PatternCard
           title="Pattern Calculators"
           description="Dart intake, seam allowance, ease and grading, done for you."
-          live={false}
+          live={true}
+          onOpen={() => router.push("/hub/pattern-math")}
         />
         <PatternCard
           title="Measurements"
