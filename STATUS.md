@@ -1,8 +1,62 @@
 # STATUS.md — Grainline
 
-Last updated: Phase 5 deadline tracker built in Claude Code (2026-08-12).
+Last updated: Phase 6 deadline push notifications built in Claude Code (2026-08-12).
 
-## Current phase: Phase 5 — Deadline/project tracker
+## Current phase: Phase 6 — Deadline push notifications
+
+### Done
+- [x] `worker/index.js` — custom `push`/`notificationclick` service worker
+      handlers, bundled into the generated `public/sw.js` via
+      `@ducanh2912/next-pwa`'s `customWorkerSrc` option (`next.config.mjs`).
+      Verified in `npm run build`: "(pwa) Found a custom worker
+      implementation" + built to `public/worker-*.js`.
+- [x] `lib/pushSubscriptions.ts` — Firestore CRUD for
+      `users/{uid}/pushSubscriptions/{id}`, doc ID derived from the
+      subscription endpoint so re-subscribing a device overwrites instead
+      of duplicating. No `firestore.rules` change needed — already covered
+      by the owner-only wildcard rule.
+- [x] `lib/webPush.ts` — client helpers: VAPID key base64 decoding, push
+      support detection, iOS/standalone (installed-to-home-screen)
+      detection.
+- [x] `components/DeadlineReminders.tsx` — toggle on `/hub/deadlines`.
+      Shows "add to home screen first" on iOS until installed, otherwise
+      requests permission + subscribes + saves to Firestore.
+- [x] `lib/firebaseAdmin.ts` — first use of Firebase Admin credentials in
+      the project (service account, not the public client config) —
+      needed because the reminders cron reads every user's deadlines via a
+      `collectionGroup` query, which client-side security rules correctly
+      can't allow.
+- [x] `app/api/cron/deadline-reminders/route.ts` — daily job: finds
+      deadlines due tomorrow that haven't been reminded about
+      (`remindersSent` dedup field on the deadline doc), sends a push via
+      `web-push` to each owner's subscribed devices, prunes subscriptions
+      the push service reports as dead (404/410).
+- [x] `vercel.json` — daily Vercel Cron trigger (03:00 UTC / 08:30 IST)
+      hitting the route above. Route checks the `Authorization: Bearer
+      $CRON_SECRET` header Vercel automatically attaches when
+      `CRON_SECRET` is set as a project env var.
+- [x] VAPID keypair generated (`npx web-push generate-vapid-keys`), added
+      to `.env`/`.env.local`.
+- [x] `npx tsc --noEmit` clean. `npm run build` confirmed the custom
+      worker compiles; the build itself fails only on Google Fonts being
+      unreachable from this sandbox (pre-existing, unrelated to this
+      phase).
+
+### Not done yet
+- [ ] **`FIREBASE_ADMIN_CLIENT_EMAIL` / `FIREBASE_ADMIN_PRIVATE_KEY` are
+      still blank** in `.env.local` — get these from Firebase Console →
+      Project Settings → Service Accounts → Generate new private key, and
+      set the same two plus `CRON_SECRET`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY`,
+      `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` on Vercel before this can send
+      anything for real.
+- [ ] End-to-end test: subscribe a real installed-PWA device, manually
+      hit `/api/cron/deadline-reminders` with the `CRON_SECRET` header
+      against a deadline due tomorrow, confirm the push arrives on iOS.
+      Couldn't do this in this session — no Firebase Admin credentials
+      available and no physical iOS device to install to.
+- [ ] Deploy to Vercel — still outstanding from Phase 1
+
+## Phase 5 — Deadline/project tracker
 
 ### Done
 - [x] `lib/deadlines.ts` — Firestore CRUD, nested at

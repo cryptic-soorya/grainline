@@ -103,6 +103,12 @@ export default function HubPage() {
           live={true}
           onOpen={() => router.push("/hub/deadlines")}
         />
+        <PatternCard
+          title="Notes"
+          description="Quick freeform notes, searchable when you need one back."
+          live={true}
+          onOpen={() => router.push("/hub/notes")}
+        />
       </div>
     </main>
   );

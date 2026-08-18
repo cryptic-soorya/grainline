@@ -11,6 +11,10 @@ const withPWA = withPWAInit({
   workboxOptions: {
     disableDevLogs: true,
   },
+  // Phase 6: bundles worker/index.js (our push/notificationclick handlers)
+  // into the generated public/sw.js via importScripts, so Workbox keeps
+  // owning offline caching while we add our own push listener on top.
+  customWorkerSrc: "worker",
 });
 
 /** @type {import('next').NextConfig} */

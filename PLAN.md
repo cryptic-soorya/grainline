@@ -133,6 +133,44 @@ usage exists)
 3. Deadline/project tracker — built 2026-08-12
 4. Terminology flashcards (spaced repetition)
 
+### Phase 6 — Deadline push notifications (started 2026-08-12)
+Reminder pushes for deadlines added in Phase 5, delivered via the installed
+PWA. This is the first feature that needs a server beyond Firestore's client
+SDK, so it's the first time real backend infra shows up in the project.
+
+**iOS constraint that shapes the whole design:** Web Push only works on iOS
+16.4+ when the app has been added to the home screen — it does *not* work in
+a plain Safari tab — and the permission prompt must fire from a direct user
+tap, not on page load. The subscribe UI has to detect standalone mode
+(`navigator.standalone` / `matchMedia('(display-mode: standalone)')`) and
+tell the user to "Add to Home Screen" first if they're not there yet.
+
+**Pieces:**
+- `public/worker/index.js` — custom `push` / `notificationclick` listeners,
+  bundled into the generated service worker via `@ducanh2912/next-pwa`'s
+  `customWorkerDir` option (no need for full injectManifest mode).
+- Client subscribe toggle (on `/hub/deadlines`) — requests permission,
+  calls `pushManager.subscribe()` with a VAPID public key, saves the
+  subscription to `users/{uid}/pushSubscriptions/{id}` (multiple devices
+  per user supported).
+- VAPID keypair (`web-push generate-vapid-keys`) — public key is
+  `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, private key is server-only
+  `VAPID_PRIVATE_KEY`.
+- Server: `firebase-admin` (service account) + `web-push` npm package.
+  `app/api/cron/deadline-reminders/route.ts` runs once a day via **Vercel
+  Cron** (`vercel.json`) — no Firebase Functions needed since hosting is
+  already on Vercel. It does a `collectionGroup("deadlines")` query across
+  all users for deadlines due tomorrow, sends a push to each owner's
+  subscriptions, and prunes subscriptions that come back 404/410 (device
+  unsubscribed or uninstalled).
+- Route is protected by a `CRON_SECRET` bearer token so it's not a public
+  trigger.
+- Dedup: each deadline gets a `remindersSent: string[]` field (e.g. `["1d"]`)
+  so the daily cron never double-sends. Completed deadlines are skipped.
+- v1 sends exactly one reminder, 1 day before the due date. Multiple
+  thresholds (3-day, day-of) are an easy follow-up once this is proven to
+  work, not a v1 requirement.
+
 ## Monetization (deferred, noted so it's not forgotten)
 Free for everyone at first, girlfriend's account permanently free via
 `isFounder` flag. Only consider a paid tier after real usage data exists —

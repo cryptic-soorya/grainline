@@ -42,6 +42,10 @@ export interface Deadline {
   completed: boolean;
   createdAt: Timestamp | null;
   updatedAt: Timestamp | null;
+  // Reminder tags already sent for this deadline (e.g. "1d"), written by
+  // the Phase 6 cron (app/api/cron/deadline-reminders) so it never sends
+  // the same reminder twice. Absent on deadlines created before Phase 6.
+  remindersSent?: string[];
 }
 
 export type DeadlineInput = Omit<Deadline, "id" | "createdAt" | "updatedAt">;

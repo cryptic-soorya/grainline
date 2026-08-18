@@ -7,6 +7,7 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { listDeadlines, type Deadline } from "@/lib/deadlines";
 import { DeadlineCard } from "@/components/DeadlineCard";
+import { DeadlineReminders } from "@/components/DeadlineReminders";
 
 /**
  * Deadlines — Phase 5. Assignment/project due dates with a submission
@@ -70,6 +71,8 @@ export default function DeadlinesPage() {
           + Add deadline
         </Link>
       </div>
+
+      {user && <DeadlineReminders uid={user.uid} />}
 
       <label className="flex items-center gap-2 font-mono text-xs uppercase tracking-wide text-parchment/60 mb-8">
         <input
