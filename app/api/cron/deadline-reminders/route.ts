@@ -40,7 +40,8 @@ export async function GET(request: NextRequest) {
   }
   webpush.setVapidDetails(subject, publicKey, privateKey);
 
-  const dueTomorrow = await adminDb
+  const db = adminDb();
+  const dueTomorrow = await db
     .collectionGroup("deadlines")
     .where("dueDate", "==", tomorrowDateString())
     .where("completed", "==", false)
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
     const uid = deadlineDoc.ref.parent.parent?.id;
     if (!uid) continue;
 
-    const subsSnap = await adminDb.collection("users").doc(uid).collection("pushSubscriptions").get();
+    const subsSnap = await db.collection("users").doc(uid).collection("pushSubscriptions").get();
     if (subsSnap.empty) continue;
 
     const payload = JSON.stringify({

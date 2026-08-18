@@ -14,7 +14,7 @@
  * public web config in lib/firebase.ts.
  */
 import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, type Firestore } from "firebase-admin/firestore";
 
 function getAdminApp(): App {
   if (getApps().length) return getApps()[0];
@@ -35,4 +35,12 @@ function getAdminApp(): App {
   return initializeApp({ credential: cert({ projectId, clientEmail, privateKey }) });
 }
 
-export const adminDb = getFirestore(getAdminApp());
+// Lazily initialized so importing this module (as Next.js does for every
+// API route while collecting page data at build time) doesn't throw just
+// because admin credentials aren't set — only calling adminDb() does, and
+// that only happens when the cron route actually runs.
+let db: Firestore | null = null;
+export function adminDb(): Firestore {
+  if (!db) db = getFirestore(getAdminApp());
+  return db;
+}
